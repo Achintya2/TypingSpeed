@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"> 
+    <script src="https://unpkg.com/alpinejs" defer></script>
+</head>
+<body class="bg-gray-900 text-gray-100 p-6">
+    <div x-data="data()">
+        <h1 class="text-3xl">Typing Test</h1>
+        <button @click="startTest()" class="bg-blue-500 py-2 px-4 rounded mt-4">Start Test</button>
+        <div x-show="question != ''" class="bg-gray-800 p-4 mt-4 w-1/2" x-text="question"></div>
+        <div class="mt-4">
+            <textarea x-model="solution" id="solution_textarea" class="w-1/2 h-64 text-gray-900 p-4 focus:outline-none" readonly @keyup="checkFinished()"></textarea>
+        </div>
+        <div class="mt-4">
+            Time: <span x-text="time"></span>s |
+            Words: <span x-text="words"></span> |
+            WPM: <span x-text="wpm"></span> |
+            CPM: <span x-text="cpm"></span>
+        </div>
+    </div>
+    <script>
+        function data(){
+            return {
+                interval: null,
+                questions: [
+                    "We provide you a fast and accurate tool.",
+                    "Hello There this is done with HTML and Js. ",
+                    "Mars is the fourth planet from the Sun",
+                ],
+                question: "",
+                solution: "",
+                time: 0,
+                words: 0,
+                characters: 0,
+                wpm: 0,
+                cpm: 0,
+                testStarted: false,
+                startTest(){
+                    let $this = this;
+                    if($this.testStarted){
+                        location.reload();
+                    } else {
+                        $this.testStarted = true;
+                        document.getElementById("solution_textarea").readOnly = false;
+                        document.getElementById("solution_textarea").focus();
+                        $this.question = $this.questions[ parseInt( Math.random() * this.questions.length ) ];
+                        $this.interval = setInterval(function(){
+                            $this.time++;
+                        }, 1000);
+                    }
+                },
+                checkFinished(){
+                    if(this.question == this.solution){
+                        document.getElementById("solution_textarea").readOnly = true;
+                        clearInterval(this.interval);
+                        this.words = this.question.split(" ").length;
+                        this.characters = this.question.split("").length;
+                        this.wpm = parseInt(this.words / this.time * 60);
+                        this.cpm = parseInt(this.characters / this.time * 60);
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>
